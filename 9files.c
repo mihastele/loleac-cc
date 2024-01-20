@@ -5,6 +5,13 @@
 #include <string.h>
 #include <unistd.h>
 
+struct database_header_t
+{
+    unsigned short version;
+    unsigned short employees;
+    unsigned int filesize;
+};
+
 // everything in linux is a file
 int main(int argc, char *argv[])
 {
@@ -32,5 +39,27 @@ int main(int argc, char *argv[])
     int len = write(fd, mydata, strlen(mydata));
 
     close(fd);
+
+    // file input
+
+    struct database_header_t head = {0};
+
+    int fd2 = open("./my-db.db", O_RDWR | O_CREAT, 0644);
+    if (fd2 == -1)
+    {
+        perror("Error opening file");
+        return -1;
+    }
+
+    if (read(fd2, &head, sizeof(head)) != sizeof(head))
+    {
+        perror("Error reading file");
+        return -1;
+    }
+
+    printf("Version: %d\n", head.version);
+    printf("Employees: %d\n", head.employees);
+    printf("Filesize: %d\n", head.filesize);
+
     return 0;
 }
