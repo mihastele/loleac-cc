@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
+
+// int g_numEmployees = 0; // global variables are a big nono
 
 struct employee_t
 {
@@ -11,13 +14,18 @@ struct employee_t
     bool ismanager;
 };
 
-void initialize_employee(struct employee_t *employee)
+int initialize_employee(struct employee_t *employee)
 {
-    employee->id = 0;
+    static int numEmployees = 0;
+    numEmployees++;
+
+    employee->id = numEmployees;
     employee->income = 1000;
     employee->ismanager = false;
     strcpy(employee->firstname, "Ralph");
     strcpy(employee->lastname, "Haelle");
+
+    return numEmployees;
 }
 
 int main()
@@ -29,9 +37,26 @@ int main()
     printf("x = %d\n", *pX);
     printf("pX = %p\n", pX);
 
-    struct employee_t Ralph;
+    int n = 4;
 
-    initialize_employee(&Ralph);
+    struct employee_t *employees = malloc(sizeof(struct employee_t) * n);
 
-    printf("Ralph's income is %f\n", Ralph.income);
+    if (employees == NULL)
+    {
+        printf("Error allocating memory!\n");
+        return -1;
+    }
+
+    for (int i = 0; i < n; i++)
+    {
+        initialize_employee(&employees[i]);
+        printf("Employee %d: %s %s\n", employees[i].id, employees[i].firstname, employees[i].lastname);
+    }
+    // initialize_employee(&employees[0]);
+
+    printf("%s's income is %f\n", employees[0].firstname, employees[0].income);
+
+    free(employees);
+    // use after free, we remove the power of using it in the future
+    employees = NULL;
 }
