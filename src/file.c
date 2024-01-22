@@ -21,7 +21,7 @@ int open_file_rw(char *filename)
 
 int create_db_file(char *filename)
 {
-    int fd = open(filename, O_RDONLY);
+    int fd = open(filename, O_RDWR);
 
     if (fd != -1)
     {
