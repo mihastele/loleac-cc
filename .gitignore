@@ -3,3 +3,5 @@
 !*.h
 !*.*
 !.gitignore
+!Makefile_11
+!Makefile
