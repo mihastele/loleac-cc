@@ -89,13 +89,14 @@ int main(int argc, char *argv[])
 
     if (addString)
     {
+        realloc(employees, sizeof(struct employee_t) * (++header->count));
         add_employee(header, employees, addString);
     }
 
     printf("New file: %d\n", newfile);
     printf("filepath: %s\n", filepath);
 
-    output_file(dbfd, header);
+    output_file(dbfd, header, employees);
 
     return 0;
 }

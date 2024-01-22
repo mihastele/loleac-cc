@@ -130,18 +130,33 @@ int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employe
 int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring)
 {
 
+    char *name = strtok(addstring, ",");
+    char *addr = strtok(NULL, ",");
+    char *hours = strtok(NULL, ",");
+
+    printf("name: %s ", name);
+    printf("addr: %s ", addr);
+    printf("hours: %s\n", hours);
+
+    strncpy(employees[dbhdr->count - 1].name, name, sizeof(employees[dbhdr->count - 1].name));
+    strncpy(employees[dbhdr->count - 1].address, addr, sizeof(employees[dbhdr->count - 1].address));
+    employees[dbhdr->count - 1].hours = atoi(hours);
+
     return STATUS_SUCCESS;
 }
 
-void output_file(int fd, struct dbheader_t *dbhdr)
+void output_file(int fd, struct dbheader_t *dbhdr, struct employee_t *employees)
 {
     if (fd == -1)
     {
         printf("Invalid file descriptor\n");
-        return STATUS_ERROR;
+        // return STATUS_ERROR;
+        return;
     }
 
-    dbhdr->filesize = htonl(dbhdr->filesize);
+    int realcount = dbhdr->count;
+
+    dbhdr->filesize = htonl(sizeof(struct dbheader_t) + (realcount * sizeof(struct employee_t)));
     dbhdr->magic = htonl(dbhdr->magic);
     dbhdr->version = htons(dbhdr->version);
     dbhdr->count = htons(dbhdr->count);
@@ -149,6 +164,12 @@ void output_file(int fd, struct dbheader_t *dbhdr)
     lseek(fd, 0, SEEK_SET);
 
     write(fd, dbhdr, sizeof(struct dbheader_t));
+
+    for (int i = 0; i < realcount; i++)
+    {
+        employees[i].hours = htonl(employees[i].hours);
+        write(fd, &employees[i], sizeof(struct employee_t));
+    }
 
     return;
 }
