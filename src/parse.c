@@ -134,9 +134,9 @@ int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *a
     char *addr = strtok(NULL, ",");
     char *hours = strtok(NULL, ",");
 
-    printf("name: %s ", name);
-    printf("addr: %s ", addr);
-    printf("hours: %s\n", hours);
+    // printf("name: %s ", name);
+    // printf("addr: %s ", addr);
+    // printf("hours: %s\n", hours);
 
     strncpy(employees[dbhdr->count - 1].name, name, sizeof(employees[dbhdr->count - 1].name));
     strncpy(employees[dbhdr->count - 1].address, addr, sizeof(employees[dbhdr->count - 1].address));

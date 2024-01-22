@@ -11,19 +11,32 @@ void print_usage()
     printf("Usage: ./db -f <filepath> [-n] <<to create a new DB>> \n");
 }
 
+void list_employees(struct dbheader_t *header, struct employee_t *employees)
+{
+    printf("Employees:\n");
+    for (int i = 0; i < header->count; i++)
+    {
+        printf("Employee %d:\n", i);
+        printf("\tName: %s\n", employees[i].name);
+        printf("\tAddress: %s\n", employees[i].address);
+        printf("\tHours: %d\n", employees[i].hours);
+    }
+}
+
 int main(int argc, char *argv[])
 {
 
     char *filepath = NULL;
     char *addString = NULL;
     bool newfile = false;
+    bool list = false;
     int c;
 
     int dbfd = -1; // database file descriptor
     struct dbheader_t *header = NULL;
     struct employee_t *employees = NULL;
 
-    while ((c = getopt(argc, argv, "nf:a:")) != -1) // options are n f(: means it has data) a(: means it has data)
+    while ((c = getopt(argc, argv, "nlf:a:")) != -1) // options are n, l, f(: means it has data), a(: means it has data)
     {
         switch (c)
         {
@@ -36,6 +49,9 @@ int main(int argc, char *argv[])
             break;
         case 'a':
             addString = optarg;
+            break;
+        case 'l':
+            list = true;
             break;
         case '?':
             printf("Unknown option: %c\n", c);
@@ -93,8 +109,13 @@ int main(int argc, char *argv[])
         add_employee(header, employees, addString);
     }
 
-    printf("New file: %d\n", newfile);
-    printf("filepath: %s\n", filepath);
+    // printf("New file: %d\n", newfile);
+    // printf("filepath: %s\n", filepath);
+
+    if (list)
+    {
+        list_employees(header, employees);
+    }
 
     output_file(dbfd, header, employees);
 
