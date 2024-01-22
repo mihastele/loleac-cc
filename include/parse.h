@@ -5,9 +5,8 @@ struct dbheader_t
 {
     unsigned short version;
     unsigned short count;
-}
+};
 
-int
-parse_file_header(int fd, int *numEmployeesOut);
+int parse_file_header(int fd, int *numEmployeesOut);
 
 #endif
