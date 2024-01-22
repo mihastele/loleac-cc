@@ -19,6 +19,7 @@ int main(int argc, char *argv[])
     int c;
 
     int dbfd = -1; // database file descriptor
+    struct dbheader_t *header = NULL;
 
     while ((c = getopt(argc, argv, "nf:")) != -1)
     {
@@ -54,6 +55,11 @@ int main(int argc, char *argv[])
             printf("Unable to create DB file\n");
             return -1;
         }
+        if (create_db_header(dbfd, &header) == STATUS_ERROR)
+        {
+            printf("Unable to create DB header\n");
+            return -1;
+        }
     }
     else
     {
@@ -63,10 +69,17 @@ int main(int argc, char *argv[])
             printf("Unable to open DB file\n");
             return -1;
         }
+        if (validate_db_header(dbfd, &header) == STATUS_ERROR)
+        {
+            printf("Unable to validate DB header\n");
+            return -1;
+        }
     }
 
     printf("New file: %d\n", newfile);
     printf("filepath: %s\n", filepath);
+
+    output_file(dbfd, header);
 
     return 0;
 }
