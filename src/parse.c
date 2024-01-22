@@ -103,8 +103,34 @@ int validate_db_header(int fd, struct dbheader_t **headerOut)
     *headerOut = header;
 }
 
-int read_employee(int fd, struct dbheader_t *, struct employee_t **employeesOut)
+int read_employees(int fd, struct dbheader_t *dbhdr, struct employee_t **employeesOut)
 {
+    int count = dbhdr->count;
+    struct employee_t *employees = calloc(count, sizeof(struct employee_t));
+
+    if (employees == -1)
+    {
+        printf("Error allocating memory for employees\n");
+        return STATUS_ERROR;
+    }
+
+    read(fd, employees, count * sizeof(struct employee_t));
+
+    int i = 0;
+    for (i = 0; i < count; i++)
+    {
+        employees[i].hours = ntohl(employees[i].hours);
+    }
+
+    *employeesOut = employees;
+
+    return STATUS_SUCCESS;
+}
+
+int add_employee(struct dbheader_t *dbhdr, struct employee_t *employees, char *addstring)
+{
+
+    return STATUS_SUCCESS;
 }
 
 void output_file(int fd, struct dbheader_t *dbhdr)

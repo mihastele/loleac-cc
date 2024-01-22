@@ -15,13 +15,15 @@ int main(int argc, char *argv[])
 {
 
     char *filepath = NULL;
+    char *addString = NULL;
     bool newfile = false;
     int c;
 
     int dbfd = -1; // database file descriptor
     struct dbheader_t *header = NULL;
+    struct employee_t *employees = NULL;
 
-    while ((c = getopt(argc, argv, "nf:")) != -1)
+    while ((c = getopt(argc, argv, "nf:a:")) != -1) // options are n f(: means it has data) a(: means it has data)
     {
         switch (c)
         {
@@ -31,6 +33,9 @@ int main(int argc, char *argv[])
 
         case 'f':
             filepath = optarg;
+            break;
+        case 'a':
+            addString = optarg;
             break;
         case '?':
             printf("Unknown option: %c\n", c);
@@ -74,6 +79,17 @@ int main(int argc, char *argv[])
             printf("Unable to validate DB header\n");
             return -1;
         }
+    }
+
+    if (read_employees(dbfd, header, &employees) != STATUS_SUCCESS)
+    {
+        printf("Unable to read employees\n");
+        return -1;
+    }
+
+    if (addString)
+    {
+        add_employee(header, employees, addString);
     }
 
     printf("New file: %d\n", newfile);
